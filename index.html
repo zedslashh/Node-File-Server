@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FileForge</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: #282c34;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        h1 {
+            margin-bottom: 0.5em;
+            font-size: 3em;
+            color: #61dafb;
+            animation: fadeIn 2s ease-out;
+        }
+
+        h2 {
+            font-size: 1.5em;
+            color: #ffffff;
+            opacity: 0;
+            animation: fadeInTagline 3s forwards;
+            animation-delay: 2s; /* Delays the tagline animation */
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(-20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInTagline {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            padding: 20px;
+            background-color: #333;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            margin-top: 40px;
+        }
+
+        .option-button {
+            display: inline-block;
+            width: 100%;
+            padding: 10px 20px;
+            margin: 10px 0;
+            font-size: 1.2em;
+            text-align: center;
+            color: #ffffff;
+            background-color: #61dafb;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .option-button:hover {
+            background-color: #21a1f1;
+        }
+
+        .form-container {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .form-container h3 {
+            color: #61dafb;
+            text-align: center;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 1em;
+            color: #ffffff;
+        }
+
+        .input-group input, .input-group textarea {
+            width: 100%;
+            padding: 10px;
+            font-size: 1em;
+            border: none;
+            border-radius: 4px;
+            background-color: #444;
+            color: #ffffff;
+            margin-bottom: 10px;
+        }
+
+        .button-group button {
+            display: inline-block;
+            width: 100%;
+            padding: 10px 20px;
+            margin: 5px 0;
+            font-size: 1em;
+            color: #ffffff;
+            background-color: #61dafb;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .button-group button:hover {
+            background-color: #21a1f1;
+        }
+
+        .back-button {
+            display: block;
+            text-align: center;
+            font-size: 1em;
+            color: #61dafb;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .back-button:hover {
+            text-decoration: underline;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #444;
+            border-radius: 5px;
+            color: #61dafb;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Header with Title and Tagline -->
+    <header style="text-align: center;">
+        <h1>FileForge</h1>
+        <h2>Your Files, Your Control</h2>
+    </header>
+
+    <div class="container">
+        <!-- Buttons for actions -->
+        <button class="option-button" onclick="showForm('create')">Create a File</button>
+        <button class="option-button" onclick="showForm('read')">Read a File</button>
+        <button class="option-button" onclick="showForm('write')">Write to a File</button>
+        <button class="option-button" onclick="showForm('search')">Search in a File</button>
+
+        <!-- Create Form -->
+        <div id="createForm" class="form-container">
+            <h3>Create a File</h3>
+            <div class="input-group">
+                <label for="createFileName">File Name</label>
+                <input type="text" id="createFileName" placeholder="Enter file name">
+            </div>
+            <div class="button-group">
+                <button onclick="createFile()">Create</button>
+            </div>
+            <span class="back-button" onclick="backToHome()">Back</span>
+        </div>
+
+        <!-- Read Form -->
+        <div id="readForm" class="form-container">
+            <h3>Read a File</h3>
+            <div class="input-group">
+                <label for="readFileName">File Name</label>
+                <input type="text" id="readFileName" placeholder="Enter file name">
+            </div>
+            <div class="button-group">
+                <button onclick="readFile()">Read</button>
+            </div>
+            <span class="back-button" onclick="backToHome()">Back</span>
+        </div>
+
+        <!-- Write Form -->
+        <div id="writeForm" class="form-container">
+            <h3>Write to a File</h3>
+            <div class="input-group">
+                <label for="writeFileName">File Name</label>
+                <input type="text" id="writeFileName" placeholder="Enter file name">
+            </div>
+            <div class="input-group">
+                <label for="writeContent">Content</label>
+                <textarea id="writeContent" placeholder="Enter content to write"></textarea>
+            </div>
+            <div class="button-group">
+                <button onclick="writeFile()">Write</button>
+            </div>
+            <span class="back-button" onclick="backToHome()">Back</span>
+        </div>
+
+        <!-- Search Form -->
+        <div id="searchForm" class="form-container">
+            <h3>Search in a File</h3>
+            <div class="input-group">
+                <label for="searchFileName">File Name</label>
+                <input type="text" id="searchFileName" placeholder="Enter file name">
+            </div>
+            <div class="input-group">
+                <label for="searchWord">Search Word</label>
+                <input type="text" id="searchWord" placeholder="Enter word to search">
+            </div>
+            <div class="button-group">
+                <button onclick="searchFile()">Search</button>
+            </div>
+            <span class="back-button" onclick="backToHome()">Back</span>
+        </div>
+
+        <!-- Result -->
+        <div id="result" class="result"></div>
+    </div>
+
+    <script>
+        // Show the selected form
+        function showForm(option) {
+            // Hide all forms
+            document.getElementById('createForm').style.display = 'none';
+            document.getElementById('readForm').style.display = 'none';
+            document.getElementById('writeForm').style.display = 'none';
+            document.getElementById('searchForm').style.display = 'none';
+
+            // Show the chosen form
+            if (option === 'create') {
+                document.getElementById('createForm').style.display = 'block';
+            } else if (option === 'read') {
+                document.getElementById('readForm').style.display = 'block';
+            } else if (option === 'write') {
+                document.getElementById('writeForm').style.display = 'block';
+            } else if (option === 'search') {
+                document.getElementById('searchForm').style.display = 'block';
+            }
+        }
+
+        // Go back to the home screen
+        function backToHome() {
+            document.getElementById('createForm').style.display = 'none';
+            document.getElementById('readForm').style.display = 'none';
+            document.getElementById('writeForm').style.display = 'none';
+            document.getElementById('searchForm').style.display = 'none';
+        }
+
+        // Create a file
+        function createFile() {
+            const fileName = document.getElementById('createFileName').value;
+            fetch('/create', {
+                method: 'POST',
+                body: JSON.stringify({ filename: fileName }),
+                headers: { 'Content-Type': 'application/json' },
+            })
+            .then(response => response.text())
+            .then(data => document.getElementById('result').innerText = data);
+        }
+
+        // Read a file
+        function readFile() {
+            const fileName = document.getElementById('readFileName').value;
+            fetch('/read', {
+                method: 'POST',
+                body: JSON.stringify({ filename: fileName }),
+                headers: { 'Content-Type': 'application/json' },
+            })
+            .then(response => response.text())
+            .then(data => document.getElementById('result').innerText = data);
+        }
+
+        // Write to a file
+        function writeFile() {
+            const fileName = document.getElementById('writeFileName').value;
+            const content = document.getElementById('writeContent').value;
+            fetch('/write', {
+                method: 'POST',
+                body: JSON.stringify({ filename: fileName, content: content }),
+                headers: { 'Content-Type': 'application/json' },
+            })
+            .then(response => response.text())
+            .then(data => document.getElementById('result').innerText = data);
+        }
+
+        // Search in a file
+        function searchFile() {
+            const fileName = document.getElementById('searchFileName').value;
+            const searchWord = document.getElementById('searchWord').value;
+            fetch('/search', {
+                method: 'POST',
+                body: JSON.stringify({ filename: fileName, searchWord: searchWord }),
+                headers: { 'Content-Type': 'application/json' },
+            })
+            .then(response => response.text())
+            .then(data => document.getElementById('result').innerText = data);
+        }
+    </script>
+
+</body>
+</html>
